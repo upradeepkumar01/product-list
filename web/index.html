@@ -1,0 +1,100 @@
+<!doctype html>
+<html class="no-js" lang="en" ng-app="ecomApp">
+<head>
+  <title>My shopping bag</title>
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+  integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    
+  <script type="text/javascript">
+    var ecomApp = angular.module("ecomApp", []);    
+    ecomApp.controller("cartController", function ($scope, $http) {
+      var self = $scope;
+      
+      self.products = [];
+      self.isProductSelected = false;
+      self.selectedProduct = {
+      };
+
+      self.selectProduct = function (product) {
+        self.selectedProduct = product;
+        self.isProductSelected = true;
+      }
+
+      self.showPrice = function (product) {
+        alert('Please pay $' + product.networkPrice);
+      }
+      
+      $http.get('/products').then(function (response) {
+        self.products = response.data.productList;
+      });
+    });      
+  </script>
+  <link rel="stylesheet" type="text/css" href="my.css">
+
+</head>
+<body>
+  <div class="container">
+    <form ng-controller="cartController">
+        <div class="row" ng-if="isProductSelected">
+          <div class="preview col-sm-12">
+            <div class="box row">
+              <div class="head">              
+                <div class="col-sm-4" style="padding-top: 1%">
+                  <img src="{{selectedProduct.imageUrls.lg}}">
+                </div>
+                <div class="col-sm-4" style="padding-top: 5%">
+                  <div>
+                    {{selectedProduct.description}}
+                  </div>
+                  <div style="padding-top: 5%">
+                    <ul>
+                      <li>
+                        Energy start qualified
+                      </li>
+                      <li>
+                        NSF Certified Sanitary 
+                      </li>
+                      <li>
+                        FanFresh> option
+                      </li>
+                    </ul>
+                  </div> 
+                </div>
+                <div class="col-sm-4" style="padding-top: 5%">
+                  <button class="btn-default" ng-click="showPrice(selectedProduct)">Add to cart</button>
+                  <div style="padding-top: 2%">
+                    ${{selectedProduct.networkPrice}}
+                  </div>                  
+                </div>
+              </div>
+            </div>              
+          </div>
+        </div>
+        <div style="margin-top: 50px"></div>     
+        <div class="row">          
+          <div ng-repeat="product in products">
+            <div class="col-sm-4 text-center">
+              <div class="box">
+                <div>
+                  <img src="{{product.imageUrls.md}}">                  
+                </div>
+                <div class="description">
+                    {{product.description}}
+                </div> 
+                <div>
+                  ${{product.networkPrice}}
+                </div>
+                <div>
+                  <button class="btn-default" ng-click="selectProduct(product)">View more</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </form>
+  </div>
+</body>
+</html>
